@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LightRenderer: {fileID: 5135096764388917313, guid: c8a11384dfeae9d4689d77f45ea1a90a, type: 3}
+  Painter: {fileID: 9134521480242861104, guid: 6756de298aa69004bb1553f0e48978aa, type: 3}
