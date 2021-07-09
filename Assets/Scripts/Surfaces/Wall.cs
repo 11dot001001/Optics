@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Surfaces.Abstractions;
+using System.Collections.Generic;
+using UnityEngine;
 
-namespace Optics
+namespace Assets.Scripts.Surfaces
 {
-	public class Wall : MonoBehaviour
+	public class Wall : MonoBehaviour, ISurface
 	{
 		public class WallPoint
 		{
@@ -13,7 +15,10 @@ namespace Optics
 		private BoxCollider _boxCollider;
 
 		public WallPoint LastSelectedPoint { get; private set; }
-		public BoxCollider BoxCollider => _boxCollider;
+
+		public float OpticalDensity => float.MaxValue;
+
+		public IEnumerable<Collider> Colliders => new Collider[] { _boxCollider };
 
 		private void OnMouseDown()
 		{
@@ -21,7 +26,7 @@ namespace Optics
 			Vector3 globalMousePosition = camera.ScreenToWorldPoint(Input.mousePosition);
 
 			_boxCollider.Raycast(new Ray(globalMousePosition, camera.transform.forward), out RaycastHit hit, float.MaxValue);
-			LastSelectedPoint =  new WallPoint
+			LastSelectedPoint = new WallPoint
 			{
 				Position = hit.point,
 				Normal = hit.normal
