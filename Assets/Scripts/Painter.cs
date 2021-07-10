@@ -17,7 +17,7 @@ namespace Optics
 			Vector3 lightDirection = endPosition - startPosition;
 			Vector3 lightDelta = lightDirection.normalized * LinePointInterval;
 			Vector3 lastLightPointPosition = startPosition;
-			for (;;)
+			for (; ; )
 			{
 				if ((lastLightPointPosition - endPosition).magnitude < LinePointInterval)
 					break;

@@ -1,19 +1,15 @@
-﻿using Assets.Scripts.Surfaces;
-using Assets.Scripts.TrajectoryCalculators.Models;
+﻿using Assets.Scripts.TrajectoryCalculators.Models;
 using UnityEngine;
 
 namespace Optics
 {
 	public class LightSource : MonoBehaviour
 	{
+		[SerializeField]
+		private Vector3 _direction = Vector3.right;
+
 		private Transform _transform;
 		private BeamDistributor _beamDistributor;
-		private Vector3 _initialLightDirection;
-		[SerializeField]
-		private Vector3 _direction  = Vector3.right;
-
-		public Wall Wall;
-		public LightRay LightRayPrefab;
 
 		private void Start()
 		{
@@ -23,20 +19,11 @@ namespace Optics
 
 		private void Update()
 		{
-			if (Wall.LastSelectedPoint == null)
-				return;
-			
-			_initialLightDirection = (Wall.LastSelectedPoint.Position - _transform.position).normalized;
-
 			_beamDistributor.Distribute(new TrajectoryPoint
 			{
 				Position = _transform.position,
-				Direction = _direction //_initialLightDirection
+				Direction = _direction
 			});
-
-			//LightRay lightRay = Instantiate(LightRayPrefab);
-			//lightRay.Initialize(_transform.position, _initialLightDirection);
-			//Destroy(lightRay, 2);
 		}
 	}
 }

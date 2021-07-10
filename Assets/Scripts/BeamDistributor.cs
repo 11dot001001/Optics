@@ -16,18 +16,19 @@ namespace Optics
 
 	public class BeamDistributor : MonoBehaviour
 	{
-		[SerializeField]
 		private BeamRenderer _beamRenderer;
-		[SerializeField]
-		private Painter _painter;
-
 		private IEnumerable<Lens> _lenses;
 		private IEnumerable<Wall> _walls;
 		private ITrajectoryCalculator _trajectoryCalculator;
 
-		public void Start()
+		public Painter PainterPrefab;
+		public BeamRenderer BeamRendererPrefab;
+
+		public void Awake()
 		{
-			PainterPovider.Painter = _painter;
+			PainterPovider.Painter = Instantiate(PainterPrefab);
+			_beamRenderer = Instantiate(BeamRendererPrefab);
+
 			_lenses = FindObjectsOfType<Lens>();
 
 			List<SurfaceComponent> surfaceComponents = new List<SurfaceComponent>();

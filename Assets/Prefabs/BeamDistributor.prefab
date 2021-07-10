@@ -43,4 +43,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfcc87856a6b24349a7751d02ed516c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _beamRenderer: {fileID: 3491711929902925099, guid: c8a11384dfeae9d4689d77f45ea1a90a, type: 3}
+  PainterPrefab: {fileID: 9134521480242861104, guid: 6756de298aa69004bb1553f0e48978aa, type: 3}
+  BeamRendererPrefab: {fileID: 3491711929902925099, guid: c8a11384dfeae9d4689d77f45ea1a90a, type: 3}
