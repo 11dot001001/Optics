@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.Surfaces.Abstractions;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Surfaces
@@ -18,7 +17,7 @@ namespace Assets.Scripts.Surfaces
 
 		public float OpticalDensity => float.MaxValue;
 
-		public IEnumerable<Collider> Colliders => new Collider[] { _boxCollider };
+		public Collider Collider =>  _boxCollider;
 
 		private void OnMouseDown()
 		{

@@ -22,12 +22,12 @@ namespace Assets.Scripts.TrajectoryCalculators
 			_surfaceComponents = surfaceComponents ?? throw new ArgumentNullException(nameof(surfaceComponents));
 		}
 
-		public IEnumerable<TrajectoryPoint> CalculateTrajectory(TrajectoryPoint startPoint)
+		public IEnumerable<TrajectoryPoint> CalculateTrajectory(TrajectoryPoint originPoint)
 		{
 			List<TrajectoryPoint> trajectory = new List<TrajectoryPoint>();
-			trajectory.Add(startPoint);
+			trajectory.Add(originPoint);
 
-			TrajectoryPoint calculatedPoint = startPoint;
+			TrajectoryPoint calculatedPoint = originPoint;
 			SurfaceComponent lastClosestSurface = null;
 			for (; ; )
 			{
@@ -43,7 +43,7 @@ namespace Assets.Scripts.TrajectoryCalculators
 				calculatedPoint = surfaceTrajectory.Last();
 			}
 
-			float exitBeamLength = 20F;
+			float exitBeamLength = 40F;
 			trajectory.Add(new TrajectoryPoint
 			{
 				Position = calculatedPoint.Position + calculatedPoint.Direction * exitBeamLength,

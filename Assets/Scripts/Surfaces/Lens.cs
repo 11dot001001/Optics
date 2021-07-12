@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.Surfaces.Abstractions;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Surfaces
@@ -9,9 +8,9 @@ namespace Assets.Scripts.Surfaces
 		[SerializeField]
 		private float _opticalDensity = OpticalDensities.Glass;
 		[SerializeField]
-		private Collider[] _colliders;
+		private Collider _collider;
 
 		public float OpticalDensity => _opticalDensity;
-		public IEnumerable<Collider> Colliders => _colliders;
+		public Collider Collider => _collider;
 	}
 }

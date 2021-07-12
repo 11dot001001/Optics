@@ -8,11 +8,11 @@ namespace Optics
 		public GameObject HelpPointPrefab;
 		public float LinePointInterval = 0.062F;
 
-		public void DrawLightLine(Vector3 startPosition, Vector3 endPosition) => DrawLine(startPosition, endPosition, LightPointPrefab);
-		public void DrawHelpLine(Vector3 startPosition, Vector3 endPosition) => DrawLine(startPosition, endPosition, HelpPointPrefab);
+		public void DrawLightLine(Vector3 startPosition, Vector3 endPosition, bool needDestroy) => DrawLine(startPosition, endPosition, LightPointPrefab, needDestroy);
+		public void DrawHelpLine(Vector3 startPosition, Vector3 endPosition, bool needDestroy) => DrawLine(startPosition, endPosition, HelpPointPrefab, needDestroy);
 		public void DrawHelpPoint(Vector3 position, bool needDestroy) => InitializePoint(position, HelpPointPrefab, needDestroy);
 
-		private void DrawLine(Vector3 startPosition, Vector3 endPosition, GameObject point)
+		private void DrawLine(Vector3 startPosition, Vector3 endPosition, GameObject point, bool needDestroy)
 		{
 			Vector3 lightDirection = endPosition - startPosition;
 			Vector3 lightDelta = lightDirection.normalized * LinePointInterval;
@@ -23,7 +23,7 @@ namespace Optics
 					break;
 
 				lastLightPointPosition += lightDelta;
-				InitializePoint(lastLightPointPosition, point, true);
+				InitializePoint(lastLightPointPosition, point, needDestroy);
 			}
 		}
 

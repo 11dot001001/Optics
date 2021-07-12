@@ -4,7 +4,6 @@ using Assets.Scripts.TrajectoryCalculators.Models;
 using Optics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts.TrajectoryCalculators
@@ -20,17 +19,17 @@ namespace Assets.Scripts.TrajectoryCalculators
 			_surface = surface ?? throw new ArgumentNullException(nameof(surface));
 		}
 
-		public IEnumerable<TrajectoryPoint> CalculateTrajectory(TrajectoryPoint startPoint)
+		public IEnumerable<TrajectoryPoint> CalculateTrajectory(TrajectoryPoint originPoint)
 		{
 			List<TrajectoryPoint> trajectory = new List<TrajectoryPoint>();
 
-			TrajectoryPoint calculatedPoint = startPoint;
+			TrajectoryPoint calculatedPoint = originPoint;
 
-			Collider incomingCollider = GetClosestCollider(calculatedPoint, _surface.Colliders, true, out RaycastHit surfaceRaycast);
-			if (incomingCollider == null)
+			Ray ray = new Ray(originPoint.Position, originPoint.Direction);
+			if (!_surface.Collider.Raycast(ray, out RaycastHit incomingRaycast, float.MaxValue))
 				return null;
 
-			TrajectoryPoint incomingSurfacePoint = ConvertSurfaceRaycast(surfaceRaycast);
+			TrajectoryPoint incomingSurfacePoint = ConvertSurfaceRaycast(incomingRaycast);
 			Vector3 modifiedBeamDirection = BeamCalculator.IncidentBeam(
 				calculatedPoint, 
 				incomingSurfacePoint,
@@ -48,19 +47,17 @@ namespace Assets.Scripts.TrajectoryCalculators
 
 			if (modifiedBeamType == BeamType.Refracted)
 			{
-				Collider lastRefractedCollider = incomingCollider;
 				for (; ; )
 				{
-					lastRefractedCollider = GetClosestCollider(
-						calculatedPoint,
-						_surface.Colliders.Where(x => x != lastRefractedCollider),
-						false,
-						out RaycastHit raycastHit
+					Ray invertedRay = new Ray(
+						calculatedPoint.Position + calculatedPoint.Direction * InvertedRayDistance,
+						calculatedPoint.Direction * -1
 					);
-					if (lastRefractedCollider == null)
-						throw new Exception("Was not found collider in lens.");
+					if(!_surface.Collider.Raycast(invertedRay, out RaycastHit raycastHit, float.MaxValue))
+						throw new Exception("Was not found hit in lens.");
 
 					TrajectoryPoint colliderPoint = ConvertSurfaceRaycast(raycastHit);
+					colliderPoint.Direction *= -1;
 					modifiedBeamDirection = BeamCalculator.IncidentBeam(
 						calculatedPoint,
 						colliderPoint,
@@ -84,12 +81,12 @@ namespace Assets.Scripts.TrajectoryCalculators
 			return trajectory;
 		}
 
-		public float? GetMinimumDistanceToSurface(TrajectoryPoint startPoint)
+		public float? GetMinimumDistanceToSurface(TrajectoryPoint originPoint)
 		{
-			if (GetClosestCollider(startPoint, _surface.Colliders, true, out RaycastHit raycastHit) != null)
-			{
-				return Vector3.Distance(startPoint.Position, raycastHit.point);
-			}
+			Ray ray = new Ray(originPoint.Position, originPoint.Direction);
+			if (_surface.Collider.Raycast(ray, out RaycastHit raycastHit, float.MaxValue))
+				return raycastHit.distance;
+
 			return null;
 		}
 
@@ -100,43 +97,6 @@ namespace Assets.Scripts.TrajectoryCalculators
 				Position = surfaceRaycast.point,
 				Direction = surfaceRaycast.normal
 			};
-		}
-		private Collider GetClosestCollider(
-			TrajectoryPoint originPoint,
-			IEnumerable<Collider> colliders,
-			bool givenDirection,
-			out RaycastHit closestRaycast
-		)
-		{
-			Ray ray = new Ray(originPoint.Position, originPoint.Direction);
-			Ray invertedRay = new Ray(
-				originPoint.Position + originPoint.Direction * InvertedRayDistance,
-				originPoint.Direction * -1
-			);
-			Collider closestCollider = null;
-			float? minDistance = null;
-			closestRaycast = new RaycastHit();
-
-			foreach (Collider collider in colliders)
-			{
-				float? distanceForCollider = null;
-				if (collider.Raycast(ray, out RaycastHit raycastHit, float.MaxValue))
-					distanceForCollider = raycastHit.distance;
-				else if (!givenDirection && collider.Raycast(invertedRay, out raycastHit, float.MaxValue))
-					distanceForCollider = Vector3.Distance(originPoint.Position, raycastHit.point);
-
-				if (!distanceForCollider.HasValue)
-					continue;
-
-				if (!minDistance.HasValue || distanceForCollider < minDistance)
-				{
-					minDistance = distanceForCollider;
-					closestCollider = collider;
-					closestRaycast = raycastHit;
-				}
-			}
-
-			return closestCollider;
 		}
 	}
 }
